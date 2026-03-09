@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ t.register_title }}</title>
+  <style>
+    body {
+      font-family: 'Source Sans Pro', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url("static/Background image.png") no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.75);
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+      color: #ffffff;
+      font-weight: bold;
+    }
+    .header-right {
+      position: absolute;
+      top: 50%;
+      right: 20px;
+      transform: translateY(-50%);
+    }
+    .lang-selector select {
+      background: #2a4d8f;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+    }
+    .card {
+      background: #2a4d8f;
+      padding: 40px;
+      max-width: 400px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      text-align: center;
+    }
+    .card h2 {
+      font-size: 24px;
+      color: #66ccff;
+      margin-bottom: 25px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #fff;
+      font-weight: bold;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    .btn {
+      display: inline-block;
+      width: 100%;
+      padding: 14px;
+      background: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.3s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      margin-top: 10px;
+    }
+    .btn:hover {
+      background: #299e44;
+    }
+    .links {
+      margin-top: 20px;
+      color: #fff;
+    }
+    .links a {
+      color: #66ccff;
+      text-decoration: none;
+    }
+    .links a:hover {
+      text-decoration: underline;
+    }
+    .alert {
+      padding: 12px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    .alert-error {
+      background: #dc3545;
+      color: #fff;
+    }
+    .alert-success {
+      background: #28a745;
+      color: #fff;
+    }
+    footer {
+      text-align: center;
+      background: rgba(0, 0, 0, 0.75);
+      color: #ddd;
+      padding: 15px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Retinitis Pigmentosa Detection</h1>
+  </header>
+  
+  <div class="container">
+    <div class="card">
+      <h2>Register</h2>
+      
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      
+      <form method="POST" action="{{ url_for('register') }}">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+        
+        <button type="submit" class="btn">Register</button>
+      </form>
+      
+      <div class="links">
+        <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+        <p><a href="{{ url_for('welcome') }}">Back to Home</a></p>
+      </div>
+    </div>
+  </div>
+  
+  <footer>
+    <p>© Retinitis Pigmentosis Detection | Register</p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Retinitis Pigmentosa Detction</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Source Sans Pro', sans-serif;
+      background: url("static/Background image.png") no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    /* Header Section */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.75);
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+    header img.logo {
+      height: 40px;
+      width: auto;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+      color: #ffffff;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    .header-right {
+      position: absolute;
+      top: 50%;
+      right: 20px;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .lang-selector select {
+      background: #2a4d8f;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .header-btn {
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-size: 14px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .header-btn-login {
+      background: transparent;
+      border: 2px solid #66ccff;
+      color: #66ccff;
+    }
+    .header-btn-login:hover {
+      background: #66ccff;
+      color: #fff;
+    }
+    .header-btn-register {
+      background: #28a745;
+      color: white;
+      border: none;
+    }
+    .header-btn-register:hover {
+      background: #299e44;
+    }
+    /* Main Card Section */
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+    }
+    .card {
+      background: #2a4d8f;
+      padding: 40px;
+      max-width: 600px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      text-align: center;
+    }
+    .card h2 {
+      font-size: 24px;
+      color: #66ccff;
+      margin-bottom: 15px;
+    }
+    .card p {
+      font-size: 16px;
+      line-height: 1.5;
+      color: #ffff;
+    }
+    /* Button Styling */
+    .btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 24px;
+      background: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.3s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+    .btn:hover {
+      background: #299e44;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 2px solid #66ccff;
+      color: #66ccff;
+      margin-left: 10px;
+    }
+    .btn-outline:hover {
+      background: #66ccff;
+      color: #fff;
+    }
+    /* Footer Section */
+    footer {
+      text-align: center;
+      background: rgba(0, 0, 0, 0.75);
+      color: #ddd;
+      padding: 15px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+  <img src="{{ url_for('static', filename='eyelogo.jpg') }}" 
+       alt="Logo"
+       style="height:18px; vertical-align:middle; margin-right:10px;">
+
+    <h1>Retinitis Pigmentosa Detection</h1>
+    <div class="header-right">
+      <a href="{{ url_for('login') }}" class="header-btn header-btn-login">Login</a>
+      <a href="{{ url_for('register') }}" class="header-btn header-btn-register">Register</a>
+    </div>
+  </header>
+  <main>
+    <div class="card">
+      <h2>AI-Powered Retinitis Pigmentosa Detection</h2>
+      <p>Retinitis Pigmentosa (RP) is a group of rare genetic disorders that involve a breakdown and loss of cells in the retina. This project uses deep learning to analyze retinal images and predict whether signs of RP are present.</p>
+      <a href="{{ url_for('login') }}" class="btn">Get Started</a>
+  </main>
+  <footer>
+    <p>© Retinitis Pigmentosa Detection | Home | Upload | Results</p>
+  </footer>
+  
+  <!-- Chatbot -->
+  {% include 'chatbot.html' %}
+  <script src="{{ url_for('static', filename='chatbot.js') }}"></script>
+</body>
+</html>

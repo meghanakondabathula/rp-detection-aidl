@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Upload</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      height:100vh;
+      margin:0;
+      background: url("static/Background image.png") no-repeat center center fixed;
+      background-size: cover;
+      color:white;
+    }
+    header {
+      width:100%;
+      text-align:center;
+      padding:18px 0;
+      font-size:1.8rem;
+      font-weight: normal; /* ✅ removed bold */
+      background:rgba(0,0,0,0.7);
+      box-shadow:0 2px 10px rgba(0,0,0,0.5);
+      position: relative;
+    }
+    .lang-selector {
+      position: absolute;
+      top: 50%;
+      right: 20px;
+      transform: translateY(-50%);
+    }
+    .lang-selector select {
+      background: #2a4d8f;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .container {
+      background:#2a4d8f;
+      padding:25px;
+      border-radius:16px;
+      text-align:center;
+      box-shadow:0 6px 30px rgba(0,0,0,0.4);
+      width:400px;
+      margin-top:40px;
+    }
+    input[type="file"] {
+      margin: 15px 0;
+      color:white;
+    }
+    .submit-btn {
+      background:#28a745;
+      border:none;
+      padding:12px 20px;
+      color:white;
+      font-size:15px;
+      font-weight:bold;
+      border-radius:8px;
+      cursor:pointer;
+      margin-top:10px;
+      transition: background 0.3s, transform 0.2s;
+      box-shadow:0 3px 8px rgba(0,0,0,0.3);
+    }
+    .submit-btn:hover {
+      background:#218838;
+      transform:scale(1.05);
+    }
+    .header-right {
+      position: absolute;
+      top: 50%;
+      right: 20px;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+    }
+    .header-btn {
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-size: 14px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      margin-left: 10px;
+    }
+    .header-btn-login {
+      background: #28a745;
+      color: white;
+      border: none;
+    }
+    .header-btn-login:hover {
+      background: #218838;
+    }
+    .header-btn-dashboard {
+      background: #007bff;
+      color: white;
+      border: none;
+    }
+    .header-btn-dashboard:hover {
+      background: #0056b3;
+    }
+    .header-btn-logout {
+      background: #dc3545;
+      color: white;
+      border: none;
+    }
+    .header-btn-logout:hover {
+      background: #c82333;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    Retintis Pigmentosa Detection
+    <div class="header-right">
+      {% if user and user.is_authenticated %}
+        <!-- ✅ simplified username -->
+        <span style="color: #fdfeff; margin-right: 15px; font-size: 18px;">
+          Welcome, {{ user.username }}!
+        </span>
+        <a href="{{ url_for('dashboard') }}" class="header-btn header-btn-dashboard">Dashboard</a>
+        <a href="{{ url_for('logout') }}" class="header-btn header-btn-logout">Logout</a>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="header-btn header-btn-login">Login</a>
+      {% endif %}
+    </div>
+  </header>
+
+  <div class="container">
+    <h2>Upload Retinal Image</h2>
+    <form id="uploadForm" action="{{ url_for('predict') }}" method="POST" enctype="multipart/form-data">
+      <input type="file" id="fileInput" name="file" accept="image/*" required>
+      <br>
+      <button type="submit" class="submit-btn">Analyze Image</button>
+    </form>
+  </div>
+  
+  <!-- SweetAlert2 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+    document.getElementById("uploadForm").addEventListener("submit", function(event) {
+      const fileInput = document.getElementById("fileInput");
+      const fileName = fileInput.value.toLowerCase();
+
+      const validKeywords = ["retina", "fundus", "uwf", "fa", "faf", "eye"];
+
+      if (!validKeywords.some(keyword => fileName.includes(keyword))) {
+        event.preventDefault();
+        Swal.fire({
+          icon: "warning",
+          title: "Invalid Image!",
+          text: "Please upload a retinal image (UWF, Fundus, or FAF scan).",
+          confirmButtonText: "OK",
+          confirmButtonColor: "#4f46e5"
+        });
+      }
+    });
+  </script>
+
+  <!-- Chatbot -->
+  {% include 'chatbot.html' %}
+  <script src="{{ url_for('static', filename='chatbot.js') }}"></script>
+
+</body>
+</html>

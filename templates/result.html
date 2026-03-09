@@ -1,0 +1,182 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Results Display</title>
+  <style>
+    body {
+      font-family:'Source Sans Pro', sans-serif;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      height:100vh;
+      margin:0;
+      background: url("static/Background image.png") no-repeat center center fixed;
+      background-size: cover;
+      color:white;
+    }
+    header {
+      width:100%;
+      text-align:center;
+      padding:18px 0;
+      font-size:1.8rem;
+      font-weight:bold;
+      background:rgba(0,0,0,0.7);
+      box-shadow:0 2px 10px rgba(0,0,0,0.5);
+    }
+    .container {
+      background:#2a4d8f;
+      padding:30px;
+      border-radius:16px;
+      text-align:center;
+      box-shadow:0 6px 30px rgba(0,0,0,0.4);
+      width:420px;
+      margin-top:40px;
+    }
+    .result-card {
+      background:white;
+      color:#333;
+      border-radius:12px;
+      padding:20px;
+      margin-top:20px;
+      box-shadow:0 4px 15px rgba(0,0,0,0.3);
+      text-align:center;
+    }
+    .gradcam-image {
+      margin-top: 20px;
+      border-radius: 12px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+      width: 100%;
+      display: none; /* hidden by default */
+    }
+    .back-btn {
+      background:#28a745;
+      border:none;
+      padding:10px 18px;
+      margin-top:15px;
+      color:white;
+      font-size:15px;
+      border-radius:8px;
+      cursor:pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .back-btn:hover {
+      background:#218838;
+      transform:scale(1.05);
+    }
+    .dashboard-btn {
+      background:#007bff;
+      border:none;
+      padding:10px 18px;
+      margin-top:15px;
+      margin-left:10px;
+      color:white;
+      font-size:15px;
+      border-radius:8px;
+      cursor:pointer;
+      transition: background 0.3s, transform 0.2s;
+      text-decoration:none;
+      display: inline-block;
+    }
+    .dashboard-btn:hover {
+      background:#0056b3;
+      transform:scale(1.05);
+    }
+    .download-btn {
+      background:#dc3545;
+      border:none;
+      padding:10px 18px;
+      margin-top:15px;
+      margin-left:10px;
+      color:white;
+      font-size:15px;
+      border-radius:8px;
+      cursor:pointer;
+      transition: background 0.3s, transform 0.2s;
+      text-decoration:none;
+      display: inline-block;
+    }
+    .download-btn:hover {
+      background:#c82333;
+      transform:scale(1.05);
+    }
+    .button-container {
+      display:flex;
+      justify-content:center;
+      margin-top:15px;
+      flex-wrap: wrap;
+    }
+    .lang-selector {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.7);
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+    .lang-selector select {
+      background: #2a4d8f;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>Results Display</header>
+
+  <div class="container">
+    <h2>Analysis Results</h2>
+
+    <div class="result-card">
+      <h3>Prediction:</h3>
+      <p id="prediction">{{ prediction }}</p>
+
+      <h3>Stage:</h3>
+      <p>{{ stage if stage else '—' }}</p>
+
+      <h3>Confidence:</h3>
+      <p>{{ confidence }}</p>
+
+      <h3>Grad-CAM:</h3>
+
+      <!-- Grad-CAM image (only for RP) -->
+      {% if gradcam %}
+      <img id="gradcamImage" src="{{ gradcam }}" alt="Grad-CAM Visualization" class="gradcam-image">
+      {% endif %}
+    </div>
+
+    <div class="button-container">
+      <a href="{{ url_for('index') }}">
+        <button class="back-btn">🔙 Upload Another Image</button>
+      </a>
+      {% if user and prediction_id %}
+      <a href="{{ url_for('download_report', prediction_id=prediction_id) }}">
+        <button class="download-btn">📥 Download Report</button>
+      </a>
+      {% endif %}
+      {% if user %}
+      <a href="{{ url_for('dashboard') }}">
+        <button class="dashboard-btn">📊 Dashboard</button>
+      </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <script>
+    // Show Grad-CAM image only if RP detected
+    const prediction = document.getElementById("prediction").innerText.trim();
+    const gradcamImg = document.getElementById("gradcamImage");
+    if (gradcamImg && prediction === "Retinitis Pigmentosa") {
+      gradcamImg.style.display = "block";
+    }
+  </script>
+
+  <!-- Chatbot -->
+  {% include 'chatbot.html' %}
+  <script src="{{ url_for('static', filename='chatbot.js') }}"></script>
+</body>
+</html>
