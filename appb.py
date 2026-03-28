@@ -696,7 +696,7 @@ def get_fallback_response(user_message):
         "diagnosis": "RP is diagnosed through: • Eye Scanning images like Colour fundus, FAF, Ultrs-Wield Field Images  • Genetic testing • Visual field testing  ",
         "treatment": "Currently, there is no cure for RP. But yes, researchers are exploring new treatments such as gene therapy, stem cell therapy, retinal implants, and neuroprotective drugs to slow or potentially reverse vision loss caused by Retinitis Pigmentosa.",
         "progression": "RP typically progresses slowly over years: • Early: Night blindness, peripheral vision loss • Moderate: Tunnel vision • Late: Significant vision loss",
-        "inheritance": "RP can be inherited in multiple ways: • Autosomal dominant (most common) • Autosomal recessive • X-linked",
+        "inheritance_genetic": "RP can be inherited in multiple ways: • Autosomal dominant (most common) • Autosomal recessive • X-linked",
         "food": "Retinitis Pigmentosa (RP) is a genetic disorder, meaning it is mainly caused by inherited gene mutations. So:❗ There is no specific food that can completely prevent RP.However, certain nutritious food may help like: Vitamin A, Omega Fatty Acids, Vitamin C, Vitamin E, Zinc.",
         "risk_factors": "Risk factors for Retinitis Pigmentosa include: • Family history of RP • Inherited genetic mutations • Consanguineous marriages (marriage within close relatives) • Certain rare syndromes associated with RP.",
         "early_signs": "Early signs of Retinitis Pigmentosa may include: • Difficulty seeing at night • Trouble adjusting from bright light to dark environments • Reduced side vision • Frequent tripping over objects in dim light.",

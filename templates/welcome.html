@@ -1,172 +1,446 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Retinitis Pigmentosa Detction</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retinitis Pigmentosa Detection System - AI-Powered Retinal Analysis</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body {
+    * {
       margin: 0;
       padding: 0;
-      font-family: 'Source Sans Pro', sans-serif;
-      background: url("static/Background image.png") no-repeat center center fixed;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      overflow-x: hidden;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%),
+                  url("../static/Background image.png") no-repeat center center fixed;
       background-size: cover;
-      display: flex;
-      flex-direction: column;
+      background-blend-mode: overlay;
       min-height: 100vh;
     }
-    /* Header Section */
+    /* Header */
     header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(20px);
+      z-index: 1000;
+      padding: 1rem 5%;
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 10px;
-      background: rgba(0, 0, 0, 0.75);
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-      position: relative;
+      justify-content: space-between;
+      transition: all 0.3s ease;
     }
-    header img.logo {
+    header.scrolled {
+      padding: 0.5rem 5%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .logo img {
       height: 40px;
       width: auto;
     }
-    header h1 {
-      margin: 0;
-      font-size: 28px;
-      color: #ffffff;
-      font-weight: bold;
-      letter-spacing: 1px;
+    .logo h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #60a5fa, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
     .header-right {
-      position: absolute;
-      top: 50%;
-      right: 20px;
-      transform: translateY(-50%);
       display: flex;
       align-items: center;
-      gap: 15px;
+      gap: 1rem;
     }
     .lang-selector select {
-      background: #2a4d8f;
+      background: rgba(30, 41, 59, 0.8);
       color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 4px;
+      border: 1px solid #475569;
+      padding: 0.5rem;
+      border-radius: 8px;
       cursor: pointer;
-      font-size: 14px;
     }
     .header-btn {
-      padding: 8px 16px;
-      border-radius: 4px;
-      font-size: 14px;
+      padding: 0.5rem 1.5rem;
+      border-radius: 50px;
       text-decoration: none;
-      cursor: pointer;
-      transition: background 0.3s ease;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
     }
-    .header-btn-login {
-      background: transparent;
-      border: 2px solid #66ccff;
-      color: #66ccff;
-    }
-    .header-btn-login:hover {
-      background: #66ccff;
-      color: #fff;
-    }
-    .header-btn-register {
-      background: #28a745;
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #1e40af);
       color: white;
-      border: none;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
     }
-    .header-btn-register:hover {
-      background: #299e44;
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6);
     }
-    /* Main Card Section */
-    main {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 40px 20px;
-    }
-    .card {
-      background: #2a4d8f;
-      padding: 40px;
-      max-width: 600px;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      text-align: center;
-    }
-    .card h2 {
-      font-size: 24px;
-      color: #66ccff;
-      margin-bottom: 15px;
-    }
-    .card p {
-      font-size: 16px;
-      line-height: 1.5;
-      color: #ffff;
-    }
-    /* Button Styling */
-    .btn {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 12px 24px;
-      background: #28a745;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.3s ease;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    }
-    .btn:hover {
-      background: #299e44;
-    }
-    .btn-outline {
+    .btn-secondary {
       background: transparent;
-      border: 2px solid #66ccff;
-      color: #66ccff;
-      margin-left: 10px;
+      color: #60a5fa;
+      border: 2px solid #60a5fa;
     }
-    .btn-outline:hover {
-      background: #66ccff;
-      color: #fff;
+    .btn-secondary:hover {
+      background: #60a5fa;
+      color: white;
     }
-    /* Footer Section */
-    footer {
+    /* Sections */
+    section {
+      padding: 5rem 5%;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    h2 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
       text-align: center;
-      background: rgba(0, 0, 0, 0.75);
-      color: #ddd;
-      padding: 15px;
-      font-size: 14px;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle {
+      font-size: 1.25rem;
+      text-align: center;
+      color: #94a3b8;
+      max-width: 600px;
+      margin: 0 auto 3rem;
+      font-weight: 400;
+    }
+    
+    /* Features */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+    .feature-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.4s ease;
+      animation: fadeInUp 0.8s ease forwards;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .feature-card:nth-child(1) { animation-delay: 0.1s; }
+    .feature-card:nth-child(2) { animation-delay: 0.2s; }
+    .feature-card:nth-child(3) { animation-delay: 0.3s; }
+    .feature-card:nth-child(4) { animation-delay: 0.4s; }
+    .feature-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #3b82f6, #1e40af);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 2rem;
+      color: white;
+    }
+    .feature-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: white;
+    }
+    .feature-card p {
+      color: #cbd5e1;
+      font-size: 1rem;
+    }
+    /* How it works */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 5rem;
+    }
+    .step {
+      text-align: center;
+      position: relative;
+    }
+    .step-number {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 auto 1.5rem;
+    }
+    /* Testimonials */
+    .testimonials {
+      background: rgba(15, 23, 42, 0.8);
+      border-radius: 20px;
+      padding: 3rem;
+      margin-top: 5rem;
+      text-align: center;
+    }
+    .testimonial {
+      opacity: 0;
+      transform: translateX(-50px);
+      transition: all 0.6s ease;
+    }
+    .testimonial.active {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .testimonial p {
+      font-size: 1.1rem;
+      font-style: italic;
+      color: #e2e8f0;
+      margin-bottom: 1rem;
+    }
+    .testimonial-author {
+      color: #60a5fa;
+      font-weight: 600;
+    }
+    /* CTA */
+    .cta {
+      text-align: center;
+      margin-top: 5rem;
+    }
+    /* Footer */
+    footer {
+      background: rgba(15, 23, 42, 0.95);
+      text-align: center;
+      padding: 2rem;
+      color: #94a3b8;
+      margin-top: 5rem;
+    }
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    /* Responsive */
+    @media (max-width: 768px) {
+      header {
+        padding: 1rem 3%;
+      }
+      .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      .hero-buttons .header-btn {
+        width: 200px;
+      }
+    }
+    /* Reveal on scroll */
+    .reveal {
+      opacity: 0;
+      transform: translateY(50px);
+      transition: all 0.8s ease;
+    }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
     }
   </style>
 </head>
 <body>
-  <header>
-  <img src="{{ url_for('static', filename='eyelogo.jpg') }}" 
-       alt="Logo"
-       style="height:18px; vertical-align:middle; margin-right:10px;">
-
-    <h1>Retinitis Pigmentosa Detection</h1>
+  <!-- Header -->
+  <header id="header">
+    <div class="logo">
+      <img src="{{ url_for('static', filename='eyelogo.jpg') }}" alt="RP Detection">
+      <h1>RP Detection System</h1>
+    </div>
     <div class="header-right">
-      <a href="{{ url_for('login') }}" class="header-btn header-btn-login">Login</a>
-      <a href="{{ url_for('register') }}" class="header-btn header-btn-register">Register</a>
+
+      {% if user and user.is_authenticated %}
+        <span style="color: #fbbf24; font-weight: 500;">Welcome, {{ user.username }}!</span>
+        <a href="{{ url_for('dashboard') }}" class="header-btn btn-primary">Dashboard</a>
+        <a href="{{ url_for('logout') }}" class="header-btn" style="background: #ef4444; color: white;">Logout</a>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="header-btn btn-secondary">Login</a>
+        <a href="{{ url_for('register') }}" class="header-btn btn-primary">Get Started</a>
+      {% endif %}
     </div>
   </header>
-  <main>
-    <div class="card">
-      <h2>AI-Powered Retinitis Pigmentosa Detection</h2>
-      <p>Retinitis Pigmentosa (RP) is a group of rare genetic disorders that involve a breakdown and loss of cells in the retina. This project uses deep learning to analyze retinal images and predict whether signs of RP are present.</p>
-      <a href="{{ url_for('login') }}" class="btn">Get Started</a>
-  </main>
+
+  <!-- Hero Section -->
+  <section id="hero" class="reveal">
+    <h1 class="hero-title" style="font-size: clamp(2.8rem, 6.5vw, 4.5rem) !important; text-align: center; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 900; margin-bottom: 1rem; letter-spacing: -0.02em;">AI-Powered Retinitis Pigmentosa Detection</h1>
+    <div class="hero-buttons">
+      <a href="{{ url_for('register') }}" class="header-btn btn-primary" style="padding: 1rem 3rem; font-size: 1.1rem;">Start Free Analysis</a>
+      <a href="#features" class="header-btn btn-secondary" style="padding: 1rem 3rem; font-size: 1.1rem;">Learn More</a>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features">
+
+    <h2>Advanced AI Features</h2>
+    <p class="subtitle">Powered by cutting-edge hybrid deep learning combining EfficientNet & Vision Transformer</p>
+    
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-brain"></i>
+        </div>
+        <h3>Hybrid AI Model</h3>
+        <p>95%+ accuracy using EfficientNet-B4 + ViT-B16 ensemble with attention mechanisms for superior retinal feature detection.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+          <i class="fas fa-eye"></i>
+        </div>
+        <h3>Grad-CAM Visualization</h3>
+        <p>Real-time heatmaps showing exactly which retinal regions triggered RP detection for clinical validation.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <h3>3-Stage Disease Progression</h3>
+        <p>Automatically classifies Early, Moderate, Severe stages based on activation patterns and progression tracking.</p>
+      </div>
+      
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section id="how-it-works" class="reveal">
+    <h2>How It Works</h2>
+    <p class="subtitle">Simple 3-step process for instant RP screening</p>
+    
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3 style="color: white;">Upload Retinal Image</h3>
+        <p style="color: white;">Upload Fundus, FAF, or UWF scan. Supports all standard retinal imaging formats.</p>
+      </div>
+      
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3 style="color: white;">AI Analysis</h3>
+        <p style="color: white;">Hybrid model processes image in <5 seconds with Grad-CAM visualization.</p>
+      </div>
+      
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3 style="color: white;">Get Results</h3>
+        <p style="color: white;">Instant Healthy/RP classification + disease stage + PDF report download.</p>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- Final CTA -->
+  <section class="cta reveal">
+    <h2>Ready to Analyze Your Scans?</h2>
+    <p class="subtitle">Join users detecting RP early. Free analysis. </p>
+    <div style="margin-top: 2rem;">
+      <a href="{{ url_for('register') }}" class="header-btn btn-primary" style="padding: 1rem 3rem; font-size: 1.2rem;">Start Free Detection</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
   <footer>
-    <p>© Retinitis Pigmentosa Detection | Home | Upload | Results</p>
+    <p>&copy; Retinitis Pigmentosa Detection System | Powered by AI</p>
   </footer>
-  
+
   <!-- Chatbot -->
   {% include 'chatbot.html' %}
+
   <script src="{{ url_for('static', filename='chatbot.js') }}"></script>
+  
+  <script>
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      document.getElementById('header').classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Stats counter animation
+    function animateCounters() {
+      const counters = document.querySelectorAll('.stat-number');
+      counters.forEach(counter => {
+        const target = +counter.getAttribute('data-target');
+        const increment = target / 100;
+        let current = 0;
+        const updateCounter = () => {
+          current += increment;
+          if (current < target) {
+            counter.textContent = Math.floor(current) + '%';
+            setTimeout(updateCounter, 20);
+          } else {
+            counter.textContent = target + (counter.textContent.includes('%') ? '%' : '+');
+          }
+        };
+        updateCounter();
+      });
+    }
+
+    // Intersection Observer for reveal animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    document.querySelectorAll('.feature-card').forEach((el, i) => {
+      el.style.animationDelay = `${i * 0.1}s`;
+      observer.observe(el);
+    });
+
+    // Stats animation on hero visible
+    observer.observe(document.getElementById('hero'));
+
+    // Smooth scrolling
+    document.querySelectorAll('a[href^=\"#"]').forEach(anchor => {
+      anchor.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.querySelector(anchor.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+
+    // Hero stats trigger
+    setTimeout(animateCounters, 2000);
+  </script>
 </body>
 </html>
