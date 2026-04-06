@@ -28,13 +28,6 @@ import base64
 import os
 import gdown
 
-MODEL_PATH = "model.pth"
-
-if not os.path.exists(MODEL_PATH):
-    url = "https://drive.google.com/uc?id=1jCY4ZITeI33q2Hvblgpq03UbBgwaGya3"
-    gdown.download(url, MODEL_PATH, quiet=False)
-
-
 def generate_timeline_chart(predictions_asc):
     """Generate timeline chart and return as base64 encoded image"""
     if not predictions_asc or len(predictions_asc) < 2:
@@ -229,14 +222,35 @@ def is_retinal_image(img_path):
     return circles is not None
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
-app.secret_key = 'your-secret-key-change-in-production'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rp_detection.db'
+app.secret_key = os.getenv("SECRET_KEY", "fallback-secret")
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL:
+    app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+else:
+    import os
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL:
+    app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rp_detection.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 CORS(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
+MODEL_PATH = "hybrid_model.pth"
+
+if not os.path.exists(MODEL_PATH):
+    import gdown
+    gdown.download(MODEL_URL, MODEL_PATH, quiet=False)
+
+model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
+model.eval()
 
 @login_manager.user_loader
 def load_user(user_id):
