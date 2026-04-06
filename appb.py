@@ -251,6 +251,26 @@ if not os.path.exists(MODEL_PATH):
 
 model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
 model.eval()
+# 1. define class
+class HybridModel(nn.Module):
+    ...
+
+# 2. download file
+MODEL_URL = "https://drive.google.com/uc?id=1jCY4ZITeI33q2Hvblgpq03UbBgwaGya3"
+MODEL_PATH = "hybrid_model.pth"
+
+if not os.path.exists(MODEL_PATH):
+    import gdown
+    gdown.download(MODEL_URL, MODEL_PATH, quiet=False, fuzzy=True)
+
+# 3. create model
+model = HybridModel()
+
+# 4. load weights
+model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
+
+# 5. eval mode
+model.eval()
 
 @login_manager.user_loader
 def load_user(user_id):
