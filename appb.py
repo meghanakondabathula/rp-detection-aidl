@@ -2,6 +2,7 @@ import os
 import torch
 import torch.nn as nn
 import numpy as np
+import gradio as gr
 from torchvision import transforms
 from torchvision.models import efficientnet_b4, vit_b_16
 from flask import Flask, request, render_template, redirect, url_for, flash, session, send_file, make_response, jsonify
@@ -256,10 +257,39 @@ if not os.path.exists(MODEL_PATH):
     import gdown
     gdown.download(MODEL_URL, MODEL_PATH, quiet=False, fuzzy=True)
 
-model = HybridModel(num_classes=len(classes)).to(device)
-model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
-model.eval()
+model = None
 
+def get_model():
+    global model
+    if model is None:
+        model = HybridModel()
+        model.load_state_dict(torch.load(MODEL_PATH, map_location="cpu"))
+        model.eval()
+    return model
+
+def predict_image(image):
+    model = get_model()
+
+    img = image.resize((224, 224))
+    img = np.array(img) / 255.0
+    img = torch.tensor(img).permute(2,0,1).unsqueeze(0).float()
+
+    with torch.no_grad():
+        output = model(img)
+        _, pred = torch.max(output, 1)
+
+    return classes[pred.item()]
+import gradio as gr
+
+interface = gr.Interface(
+    fn=predict_image,
+    inputs=gr.Image(type="pil"),
+    outputs="text",
+    title="Retinitis Pigmentosa Detection",
+    description="Upload retinal image"
+)
+
+interface.launch()
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.get(User, int(user_id))
