@@ -5,14 +5,18 @@ import numpy as np
 import gradio as gr
 from torchvision.models import efficientnet_b4, vit_b_16
 import gdown
+import os
+import gdown
 
-# Download model
 MODEL_URL = "https://drive.google.com/uc?id=1jCY4ZITeI33q2Hvblgpq03UbBgwaGya3"
 MODEL_PATH = "hybrid_model.pth"
 
-if not os.path.exists(MODEL_PATH):
-    gdown.download(MODEL_URL, MODEL_PATH, quiet=False, fuzzy=True)
+def download_model():
+    if not os.path.exists(MODEL_PATH):
+        print("Downloading model...")
+        gdown.download(MODEL_URL, MODEL_PATH, quiet=False, fuzzy=True)
 
+download_model()
 # Model
 class HybridModel(nn.Module):
     def __init__(self):
