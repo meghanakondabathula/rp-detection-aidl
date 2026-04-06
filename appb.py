@@ -25,6 +25,14 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import base64
+import os
+import gdown
+
+MODEL_PATH = "model.pth"
+
+if not os.path.exists(MODEL_PATH):
+    url = "https://drive.google.com/uc?id=1jCY4ZITeI33q2Hvblgpq03UbBgwaGya3"
+    gdown.download(url, MODEL_PATH, quiet=False)
 
 
 def generate_timeline_chart(predictions_asc):
