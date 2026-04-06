@@ -1,17 +1,13 @@
-import os
-import torch
-import torch.nn as nn
-import numpy as np
 import gradio as gr
-from torchvision.models import efficientnet_b4, vit_b_16
-import os
-import gdown
 
 def hello(name):
     return "Hello " + name
 
-demo = gr.Interface(fn=hello, inputs="text", outputs="text")
+demo = gr.Interface(
+    fn=hello,
+    inputs=gr.Textbox(),
+    outputs=gr.Textbox()
+)
 
-demo.launch()
-
-
+if __name__ == "__main__":
+    demo.launch()
