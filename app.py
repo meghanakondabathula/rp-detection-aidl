@@ -32,10 +32,16 @@ class HybridModel(nn.Module):
         f2 = self.vit(x)
         return self.classifier(torch.cat((f1, f2), dim=1))
 
-model = HybridModel()
-model.load_state_dict(torch.load(MODEL_PATH, map_location="cpu"))
-model.eval()
 
+model = HybridModel()
+
+try:
+    model.load_state_dict(torch.load(MODEL_PATH, map_location="cpu"))
+except Exception as e:
+    print("Model loading failed:", e)
+    raise e
+
+model.eval()
 classes = ["Healthy", "Retinitis Pigmentosa"]
 
 def predict(image):
