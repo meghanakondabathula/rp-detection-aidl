@@ -2,7 +2,6 @@ import os
 import torch
 import torch.nn as nn
 import numpy as np
-import gradio as gr
 from torchvision import transforms
 from torchvision.models import efficientnet_b4, vit_b_16
 from flask import Flask, request, render_template, redirect, url_for, flash, session, send_file, make_response, jsonify
