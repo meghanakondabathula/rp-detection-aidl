@@ -165,8 +165,7 @@ class HybridModel(nn.Module):
         f2 = self.vit(x)
         combined = torch.cat((f1, f2), dim=1)
         return self.classifier(combined)
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = "cpu"
 classes = ["Healthy", "Retinitis Pigmentosa"]
 model = HybridModel(num_classes=len(classes)).to(device)
 model.load_state_dict(torch.load("hybrid_model.pth", map_location=device))
@@ -257,15 +256,17 @@ if not os.path.exists(MODEL_PATH):
     import gdown
     gdown.download(MODEL_URL, MODEL_PATH, quiet=False, fuzzy=True)
 
-model = None
+MODEL_URL = "https://drive.google.com/uc?id=1jCY4ZITeI33q2Hvblgpq03UbBgwaGya3"
+MODEL_PATH = "hybrid_model.pth"
 
-def get_model():
-    global model
-    if model is None:
-        model = HybridModel()
-        model.load_state_dict(torch.load(MODEL_PATH, map_location="cpu"))
-        model.eval()
-    return model
+if not os.path.exists(MODEL_PATH):
+    import gdown
+    gdown.download(MODEL_URL, MODEL_PATH, quiet=False, fuzzy=True)
+
+model = HybridModel()
+model.load_state_dict(torch.load(MODEL_PATH, map_location="cpu"))
+model.to(device)  
+model.eval()
 
 def predict_image(image):
     model = get_model()
@@ -809,7 +810,6 @@ def clear_chat():
 
 
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
-    port = int(os.environ.get("PORT", 10000))
+    import os
+    port = int(os.environ.get("PORT", 8000))
     app.run(host="0.0.0.0", port=port)
