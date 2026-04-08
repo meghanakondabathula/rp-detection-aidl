@@ -244,10 +244,6 @@ login_manager.login_view = 'login'
 
 MODEL_PATH = "hybrid_model.pth"
 
-if not os.path.exists(MODEL_PATH):
-    import gdown
-    gdown.download(MODEL_URL, MODEL_PATH, quiet=False)
-
 MODEL_URL = "https://drive.google.com/uc?id=1jCY4ZITeI33q2Hvblgpq03UbBgwaGya3"
 MODEL_PATH = "hybrid_model.pth"
 
@@ -255,17 +251,6 @@ if not os.path.exists(MODEL_PATH):
     import gdown
     gdown.download(MODEL_URL, MODEL_PATH, quiet=False, fuzzy=True)
 
-MODEL_URL = "https://drive.google.com/uc?id=1jCY4ZITeI33q2Hvblgpq03UbBgwaGya3"
-MODEL_PATH = "hybrid_model.pth"
-
-if not os.path.exists(MODEL_PATH):
-    import gdown
-    gdown.download(MODEL_URL, MODEL_PATH, quiet=False, fuzzy=True)
-
-model = HybridModel()
-model.load_state_dict(torch.load(MODEL_PATH, map_location="cpu"))
-model.to(device)  
-model.eval()
 
 def predict_image(image):
     model = get_model()
@@ -289,7 +274,6 @@ interface = gr.Interface(
     description="Upload retinal image"
 )
 
-interface.launch()
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.get(User, int(user_id))
@@ -307,7 +291,7 @@ def welcome():
     lang = session.get('language', 'en')
     t = get_translations(lang)
     return render_template("welcome.html", t=t, languages=languages, current_lang=lang, user=current_user if current_user.is_authenticated else None)
-
+    return "Backend is running ✅"
 @app.route("/index")
 @login_required
 def index():
