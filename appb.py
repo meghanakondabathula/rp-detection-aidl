@@ -275,15 +275,6 @@ def predict_image(image):
         _, pred = torch.max(output, 1)
 
     return classes[pred.item()]
-import gradio as gr
-
-interface = gr.Interface(
-    fn=predict_image,
-    inputs=gr.Image(type="pil"),
-    outputs="text",
-    title="Retinitis Pigmentosa Detection",
-    description="Upload retinal image"
-)
 
 @login_manager.user_loader
 def load_user(user_id):
