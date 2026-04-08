@@ -166,10 +166,21 @@ class HybridModel(nn.Module):
         return self.classifier(combined)
 device = "cpu"
 classes = ["Healthy", "Retinitis Pigmentosa"]
-model = HybridModel(num_classes=len(classes)).to(device)
-model.load_state_dict(torch.load("hybrid_model.pth", map_location=device))
-model.eval()
+model = None
 
+def load_model():
+    global model
+
+    if model is None:
+        if not os.path.exists(MODEL_PATH):
+            print("Downloading model...")
+            gdown.download(MODEL_URL, MODEL_PATH, quiet=False, fuzzy=True)
+
+        print("Loading model...")
+        model = HybridModel(num_classes=len(classes)).to(device)
+        model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
+        model.eval()
+        print("Model ready!")
 transform = transforms.Compose([
     transforms.Resize((224, 224)),
     transforms.ToTensor(),
@@ -630,53 +641,68 @@ def download_dashboard():
     filename = f"RP_Dashboard_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
     response.headers['Content-Disposition'] = f'attachment; filename={filename}'
     return response
-
-@app.route("/download_latest_report")
-@login_required
-def download_latest_report():
-    prediction = PredictionResult.query.filter_by(user_id=current_user.id).order_by(PredictionResult.created_at.desc()).first()
-    if not prediction:
-        flash("No predictions found!", "error")
-        return redirect(url_for("dashboard"))
-    return redirect(url_for('download_report', prediction_id=prediction.id))
-
 @app.route("/predict", methods=["POST"])
 @login_required
 def predict():
     lang = session.get('language', 'en')
     t = get_translations(lang)
+
     if "file" not in request.files:
-        return render_template("result.html", t=t, prediction="No file uploaded", confidence="N/A", user=current_user if current_user.is_authenticated else None, languages=languages, current_lang=lang)
+        return render_template("result.html", t=t, prediction="No file uploaded", confidence="N/A",
+                               user=current_user if current_user.is_authenticated else None,
+                               languages=languages, current_lang=lang)
+
     file = request.files["file"]
+
     if file.filename == "":
-        return render_template("result.html", t=t, prediction="No file selected", confidence="N/A", user=current_user if current_user.is_authenticated else None, languages=languages, current_lang=lang)
+        return render_template("result.html", t=t, prediction="No file selected", confidence="N/A",
+                               user=current_user if current_user.is_authenticated else None,
+                               languages=languages, current_lang=lang)
+
     file_path = os.path.join(UPLOAD_FOLDER, file.filename)
     file.save(file_path)
+
     if not is_retinal_image(file_path):
-        return render_template("result.html", t=t, prediction="⚠️ Please upload a retinal image (UWF, Fundus, or FAF scan).", confidence="N/A", stage=None, gradcam=None, user=current_user if current_user.is_authenticated else None, languages=languages, current_lang=lang)
+        return render_template("result.html", t=t,
+                               prediction="⚠️ Please upload a retinal image (UWF, Fundus, or FAF scan).",
+                               confidence="N/A", stage=None, gradcam=None,
+                               user=current_user if current_user.is_authenticated else None,
+                               languages=languages, current_lang=lang)
+
     try:
+        # ✅ LOAD MODEL SAFELY
+        model_instance = get_model()
+
         img = Image.open(file_path).convert("RGB")
         img_tensor = transform(img).unsqueeze(0).to(device)
+
         with torch.no_grad():
-            outputs = model(img_tensor)
+            outputs = model_instance(img_tensor)   # ✅ FIXED HERE
             probs = torch.softmax(outputs, dim=1)
             conf, pred = torch.max(probs, 1)
+
         label = classes[pred.item()]
         confidence = f"{conf.item() * 100:.2f}%"
+
         stage = None
         gradcam_path = None
+
         if label == "Retinitis Pigmentosa":
-            heatmap = generate_gradcam(model, img_tensor)
+            heatmap = generate_gradcam(model_instance, img_tensor)  # ✅ FIXED HERE
             stage = estimate_stage(heatmap)
+
             img_np = np.array(img.resize((224, 224)))
             heatmap_resized = cv2.resize(heatmap, (224, 224))
             heatmap_color = cv2.applyColorMap(np.uint8(255 * heatmap_resized), cv2.COLORMAP_JET)
             overlay = cv2.addWeighted(heatmap_color, 0.5, img_np, 0.5, 0)
+
             gradcam_filename = f"gradcam_{file.filename}"
             gradcam_path = os.path.join("static", "uploads", gradcam_filename)
+
             cv2.imwrite(gradcam_path, cv2.cvtColor(overlay, cv2.COLOR_RGB2BGR))
-        
+
         saved_prediction_id = None
+
         if current_user.is_authenticated:
             prediction_result = PredictionResult(
                 user_id=current_user.id,
@@ -689,9 +715,24 @@ def predict():
             db.session.add(prediction_result)
             db.session.commit()
             saved_prediction_id = prediction_result.id
-        return render_template("result.html", t=t, prediction=label, confidence=confidence, stage=stage, gradcam=gradcam_path, user=current_user if current_user.is_authenticated else None, languages=languages, current_lang=lang, prediction_id=saved_prediction_id)
+
+        return render_template("result.html", t=t,
+                               prediction=label,
+                               confidence=confidence,
+                               stage=stage,
+                               gradcam=gradcam_path,
+                               user=current_user if current_user.is_authenticated else None,
+                               languages=languages,
+                               current_lang=lang,
+                               prediction_id=saved_prediction_id)
+
     except Exception as e:
-        return render_template("result.html", t=t, prediction="Error", confidence=str(e), user=current_user if current_user.is_authenticated else None, languages=languages, current_lang=lang)
+        return render_template("result.html", t=t,
+                               prediction="Error",
+                               confidence=str(e),
+                               user=current_user if current_user.is_authenticated else None,
+                               languages=languages,
+                               current_lang=lang)
 
 GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE"
 GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
